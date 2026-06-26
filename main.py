@@ -11,6 +11,7 @@ from modules.report import generate_report
 from modules.speech_analysis import ( start_recording, stop_recording, speech_to_text, calculate_wpm, count_fillers)
 from modules.feedback import generate_feedback
 from modules.interview_type import select_interview_type
+from modules.pdf_report import generate_pdf_report
 
 # MediaPipe Setup
 mp_face_mesh = mp.solutions.face_mesh
@@ -79,6 +80,8 @@ else:
 current_question_index = 0
 
 asked_questions = []
+
+interview_results = []
 
 question_start_time = time.time()
 
@@ -313,6 +316,23 @@ while True:
 
         if current_question not in asked_questions:
             asked_questions.append(current_question)
+        
+        # Temporary placeholder answer
+        interview_results.append({
+
+            "question": current_question,
+
+            "answer": "Sample Answer",
+
+            "answer_score": 0,
+
+            "keywords_found": [],
+
+            "missing_keywords": [],
+
+            "feedback": ""
+
+        })
 
         if current_question_index < len(questions) - 1:
 
@@ -325,6 +345,22 @@ while True:
 
         if current_question not in asked_questions:
             asked_questions.append(current_question)
+        
+        interview_results.append({
+
+            "question": current_question,
+
+            "answer": "Sample Answer",
+
+            "answer_score": 0,
+
+            "keywords_found": [],
+
+            "missing_keywords": [],
+
+            "feedback": ""
+
+        })
 
         break
 
@@ -402,3 +438,31 @@ generate_report(
     communication_score,
     feedback
 )
+
+generate_pdf_report(
+
+    interview_type,
+
+    interview_duration,
+
+    eye_score,
+
+    head_score,
+
+    posture_score,
+
+    communication_score,
+
+    confidence_score,
+
+    asked_questions,
+
+    feedback
+
+)
+
+print("\nInterview Results:\n")
+
+for result in interview_results:
+
+    print(result)

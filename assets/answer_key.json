@@ -1,0 +1,32 @@
+{
+    "What is Python?": {
+        "ideal_answer": "Python is a high level interpreted object oriented programming language used for web development, automation, artificial intelligence and data science.",
+        "keywords": [
+            "high level",
+            "interpreted",
+            "programming",
+            "object oriented",
+            "AI",
+            "data science"
+        ]
+    },
+
+    "What is Machine Learning?": {
+        "ideal_answer": "Machine learning is a subset of artificial intelligence that enables computers to learn patterns from data without being explicitly programmed.",
+        "keywords": [
+            "AI",
+            "data",
+            "patterns",
+            "learning"
+        ]
+    },
+
+    "What is Deep Learning?": {
+        "ideal_answer": "Deep learning is a subset of machine learning that uses artificial neural networks with multiple hidden layers.",
+        "keywords": [
+            "neural network",
+            "hidden layers",
+            "machine learning"
+        ]
+    }
+}
