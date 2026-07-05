@@ -2,6 +2,9 @@ import sounddevice as sd
 from scipy.io.wavfile import write
 from faster_whisper import WhisperModel
 import numpy as np
+import os
+from datetime import datetime
+
 audio_data = []
 sample_rate = 44100
 recording = False
@@ -115,13 +118,27 @@ def start_recording():
 
 def stop_recording(
         stream,
-        filename="recordings/interview_audio.wav"
+        filename=None
 ):
 
     global recording
 
-    recording = False
+    if filename is None:
 
+        os.makedirs(
+            "recordings",
+            exist_ok=True
+        )
+
+        filename = (
+            "recordings/" +
+            datetime.now().strftime(
+                "%Y%m%d_%H%M%S.wav"
+            )
+        )
+        
+    recording = False
+  
     stream.stop()
     stream.close()
 

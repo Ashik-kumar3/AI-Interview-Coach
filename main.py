@@ -12,6 +12,19 @@ from modules.speech_analysis import ( start_recording, stop_recording, speech_to
 from modules.feedback import generate_feedback
 from modules.interview_type import select_interview_type
 from modules.pdf_report import generate_pdf_report
+from modules.interview_session import InterviewSession
+from modules.answer_evaluator import evaluate_answer
+from modules.hr_evaluator import evaluate_hr_answer
+
+# Load question banks once
+
+hr_questions = load_questions(
+    "assets/hr_questions.txt"
+)
+
+technical_questions = load_questions(
+    "assets/technical_questions.txt"
+)
 
 # MediaPipe Setup
 mp_face_mesh = mp.solutions.face_mesh
@@ -34,9 +47,7 @@ pose = mp_pose.Pose(
 # Webcam
 cap = cv2.VideoCapture(0)
 
-audio_stream = start_recording()
-
-print("Interview recording started...")
+audio_stream = None
 
 # Start interview timer
 start_time = time.time()
@@ -81,7 +92,7 @@ current_question_index = 0
 
 asked_questions = []
 
-interview_results = []
+session = InterviewSession()
 
 question_start_time = time.time()
 
@@ -228,6 +239,12 @@ while True:
 
     current_question = questions[current_question_index]
 
+    if audio_stream is None:
+
+        audio_stream = start_recording()
+
+        print(f"Recording started for Question {current_question_index + 1}")
+
     question_number = current_question_index + 1
     
     question_elapsed = int(
@@ -317,22 +334,61 @@ while True:
         if current_question not in asked_questions:
             asked_questions.append(current_question)
         
-        # Temporary placeholder answer
-        interview_results.append({
+        # Stop recording current answer
 
-            "question": current_question,
+        audio_file = stop_recording(audio_stream)
 
-            "answer": "Sample Answer",
+        audio_stream = None
 
-            "answer_score": 0,
+        # Convert speech to text
 
-            "keywords_found": [],
+        answer = speech_to_text(audio_file)
 
-            "missing_keywords": [],
+        # HR Questions
 
-            "feedback": ""
+        if current_question in hr_questions:
 
-        })
+            score, feedback = evaluate_hr_answer(
+                current_question,
+                answer
+            )
+
+            found = []
+
+            missing = []
+
+        # Technical Questions
+
+        else:
+
+            score, found, missing, feedback = evaluate_answer(
+                current_question,
+                answer
+            )
+
+        # Save interview result
+
+        session.add_result(
+
+            question=current_question,
+
+            answer=answer,
+
+            answer_score=score,
+
+            keywords_found=found,
+
+            missing_keywords=missing,
+
+            feedback=feedback
+
+        )
+
+        print("\n--------------------------")
+        print("Question :", current_question)
+        print("Answer :", answer)
+        print("Score :", score)
+        print("--------------------------\n")
 
         if current_question_index < len(questions) - 1:
 
@@ -346,31 +402,73 @@ while True:
         if current_question not in asked_questions:
             asked_questions.append(current_question)
         
-        interview_results.append({
+        # Stop recording current answer
 
-            "question": current_question,
+        audio_file = stop_recording(audio_stream)
 
-            "answer": "Sample Answer",
+        audio_stream = None
 
-            "answer_score": 0,
+        # Convert speech to text
 
-            "keywords_found": [],
+        answer = speech_to_text(audio_file)
 
-            "missing_keywords": [],
+        # HR Questions
 
-            "feedback": ""
+        if current_question in hr_questions:
 
-        })
+            score, feedback = evaluate_hr_answer(
+
+                current_question,
+
+                answer
+
+            )
+
+            found = []
+
+            missing = []
+
+        # Technical Questions
+
+        else:
+
+            score, found, missing, feedback = evaluate_answer(
+
+                current_question,
+
+                answer
+
+            )
+
+        # Save interview result
+
+        session.add_result(
+
+            question=current_question,
+
+            answer=answer,
+
+            answer_score=score,
+
+            keywords_found=found,
+
+            missing_keywords=missing,
+
+            feedback=feedback
+
+        )
+
+        print("\n--------------------------")
+        print("Question :", current_question)
+        print("Answer :", answer)
+        print("Score :", score)
+        print("--------------------------\n")
 
         break
 
 # Release Resources
 cap.release()
 cv2.destroyAllWindows()
-
-audio_file = stop_recording(
-    audio_stream
-)
 
 interview_duration = int(time.time() - start_time)
 
@@ -463,6 +561,6 @@ generate_pdf_report(
 
 print("\nInterview Results:\n")
 
-for result in interview_results:
+for result in session.get_results():
 
     print(result)

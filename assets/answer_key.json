@@ -1,32 +1,147 @@
 {
     "What is Python?": {
-        "ideal_answer": "Python is a high level interpreted object oriented programming language used for web development, automation, artificial intelligence and data science.",
+        "ideal_answer": "Python is a high-level, interpreted, object-oriented programming language known for its simple syntax and extensive libraries. It is widely used in web development, automation, artificial intelligence, machine learning, and data science.",
         "keywords": [
             "high level",
             "interpreted",
             "programming",
             "object oriented",
+            "libraries",
             "AI",
             "data science"
         ]
     },
-
-    "What is Machine Learning?": {
-        "ideal_answer": "Machine learning is a subset of artificial intelligence that enables computers to learn patterns from data without being explicitly programmed.",
+    "What is flow control in Python?": {
+        "ideal_answer": "Flow control determines the execution order using if, elif, else, for, while, break, continue and pass.",
         "keywords": [
-            "AI",
+            "if",
+            "elif",
+            "else",
+            "for",
+            "while",
+            "break",
+            "continue",
+            "pass"
+        ]
+    },
+    "What is the difference between a list and tuple?": {
+        "ideal_answer": "Lists are mutable whereas tuples are immutable. Both are ordered collections, but tuples are generally faster.",
+        "keywords": [
+            "mutable",
+            "immutable",
+            "ordered",
+            "list",
+            "tuple",
+            "performance"
+        ]
+    },
+    "Explain OOP concepts in Python?": {
+        "ideal_answer": "The four pillars of OOP are encapsulation, inheritance, polymorphism and abstraction using classes and objects.",
+        "keywords": [
+            "encapsulation",
+            "inheritance",
+            "polymorphism",
+            "abstraction",
+            "class",
+            "object"
+        ]
+    },
+    "What is the difference between AI and ML?": {
+        "ideal_answer": "AI is the broader field of intelligent systems, while ML is a subset that learns from data.",
+        "keywords": [
+            "artificial intelligence",
+            "machine learning",
+            "subset",
             "data",
-            "patterns",
             "learning"
         ]
     },
-
-    "What is Deep Learning?": {
-        "ideal_answer": "Deep learning is a subset of machine learning that uses artificial neural networks with multiple hidden layers.",
+    "What are the types of machine learning?": {
+        "ideal_answer": "Supervised, unsupervised, semi-supervised and reinforcement learning.",
         "keywords": [
-            "neural network",
-            "hidden layers",
-            "machine learning"
+            "supervised",
+            "unsupervised",
+            "semi supervised",
+            "reinforcement"
+        ]
+    },
+    "What is overfitting and underfitting?": {
+        "ideal_answer": "Overfitting memorizes training data while underfitting fails to learn patterns.",
+        "keywords": [
+            "overfitting",
+            "underfitting",
+            "training",
+            "testing",
+            "generalization"
+        ]
+    },
+    "Explain cross validation?": {
+        "ideal_answer": "Cross validation evaluates models by repeatedly splitting data, commonly k-fold cross validation.",
+        "keywords": [
+            "k-fold",
+            "validation",
+            "folds",
+            "generalization"
+        ]
+    },
+    "What is a confusion matrix?": {
+        "ideal_answer": "A confusion matrix contains true positives, true negatives, false positives and false negatives.",
+        "keywords": [
+            "true positive",
+            "true negative",
+            "false positive",
+            "false negative"
+        ]
+    },
+    "What is a neural network?": {
+        "ideal_answer": "A neural network is made of interconnected neurons with input, hidden and output layers.",
+        "keywords": [
+            "neurons",
+            "input",
+            "hidden",
+            "output",
+            "deep learning"
+        ]
+    },
+    "What is backpropagation?": {
+        "ideal_answer": "Backpropagation computes gradients and updates weights using gradient descent.",
+        "keywords": [
+            "gradient",
+            "weights",
+            "gradient descent",
+            "loss"
+        ]
+    },
+    "Differentiate between ANN,CNN and RNN?": {
+        "ideal_answer": "ANN is a general neural network, CNN is for images, and RNN is for sequential data.",
+        "keywords": [
+            "ANN",
+            "CNN",
+            "RNN",
+            "image",
+            "sequence",
+            "convolution",
+            "recurrent"
+        ]
+    },
+    "What is transfer learning?": {
+        "ideal_answer": "Transfer learning fine-tunes a pretrained model for a related task.",
+        "keywords": [
+            "pretrained",
+            "fine tuning",
+            "feature extraction",
+            "transfer learning"
+        ]
+    },
+    "What is MediaPipe?": {
+        "ideal_answer": "MediaPipe is Google's framework for real-time computer vision such as face mesh, pose estimation and hand tracking.",
+        "keywords": [
+            "google",
+            "computer vision",
+            "face mesh",
+            "pose",
+            "hand tracking",
+            "real time"
         ]
     }
 }
