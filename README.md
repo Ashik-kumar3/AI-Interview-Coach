@@ -1,86 +1,145 @@
-<<<<<<< HEAD
-# AI Interview Coach
+# 🎤 AI Interview Coach - Intelligent Interview Preparation Platform
 
 ## Project Overview
 
 Many students and fresh graduates have strong technical knowledge but struggle to perform effectively in interviews due to poor communication, weak eye contact, nervous body language, and lack of interview practice. As a result, they often face rejection despite having the required skills.
 
-AI Interview Coach is an intelligent interview preparation system that helps candidates assess and improve their interview performance. Using Computer Vision and Speech Analysis, it evaluates eye contact, head movements, posture, speaking pace, and filler word usage while answering interview questions.
-
-The system generates a performance report with actionable feedback, helping candidates identify weaknesses, track improvement, and build confidence before real interviews.
-
+AI Interview Coach is an intelligent interview preparation system that helps candidates assess and improve their interview performance. Using Computer Vision, Speech Recognition, and Natural Language Processing (NLP), it evaluates eye contact, head stability, posture, communication skills, and answer quality during HR and technical interviews. The system generates detailed performance reports with personalized feedback, enabling users to identify weaknesses, monitor improvement, and build confidence before real interviews.
 
 ---
 
-## Features
+# 🚀 Features
 
-### Computer Vision Analysis
+## 🎥 Real-Time Computer Vision Analysis
 
-* Eye Contact Detection
-* Head Pose Analysis
-* Posture Analysis
-* Confidence Score Calculation
-
-### Interview Simulation
-
-* Real-Time Interview Question Display
-* Question Progress Tracking
-* Interview Duration Tracking
-
-### Speech Analysis
-
-* Audio Recording
-* Speech-to-Text Transcription using Faster Whisper
-* Words Per Minute (WPM) Calculation
-* Filler Word Detection
-* Communication Score Calculation
-
-### Reporting
-
-* Automated Interview Report Generation
-* Performance Metrics Summary
-* Interview Questions Tracking
-* Report Saving in Text Format
+- Eye Contact Detection
+- Head Stability Analysis
+- Posture Analysis
+- Confidence Score Calculation
+- Live Performance Metrics
 
 ---
 
-## Project Workflow
+## 🎤 Speech Analysis
 
-1. Start the interview session.
-2. Interview questions are displayed on the screen.
-3. MediaPipe tracks eye contact, head movement, and posture.
-4. Audio is recorded and analyzed.
-5. Speech is transcribed using Faster Whisper.
-6. Communication metrics are calculated.
-7. A final interview report is generated automatically.
+- Audio Recording
+- Speech-to-Text Transcription using Faster Whisper
+- Speaking Speed (Words Per Minute)
+- Filler Word Detection
+- Communication Score Calculation
 
 ---
 
-## Technologies Used
+## 🧠 AI Answer Evaluation
 
-* Python
-* OpenCV
-* MediaPipe
-* Faster Whisper
-* NumPy
-* SciPy
-* SoundDevice
+### HR Interview Evaluation
+
+- Soft Skill Assessment
+- Communication Quality Analysis
+- Motivation Detection
+- Personalized HR Feedback
+
+### Technical Interview Evaluation
+
+- Semantic Similarity Scoring
+- Keyword Matching
+- Missing Concept Detection
+- Technical Answer Evaluation
+- Question-wise Performance Analysis
 
 ---
 
-## Project Structure
+## 📄 Automated Report Generation
+
+- Interview Summary
+- Question-wise Performance Report
+- Communication Metrics
+- Confidence Analysis
+- Personalized Feedback
+- Downloadable PDF Report
+
+---
+
+## 💻 Interactive Streamlit Dashboard
+
+- Live Webcam Feed
+- Live Computer Vision Analysis
+- Interview Question Navigation
+- Real-Time Transcript Display
+- Answer Evaluation Panel
+- PDF Report Download
+
+---
+
+# 🔄 Project Workflow
+
+1. Start a new interview session.
+2. Select the interview mode:
+   - HR Interview
+   - Technical Interview
+   - HR + Technical Interview
+3. Answer interview questions while maintaining eye contact.
+4. MediaPipe analyzes facial landmarks and posture in real time.
+5. Audio is recorded and transcribed using Faster Whisper.
+6. HR or Technical answers are automatically evaluated.
+7. Performance metrics are calculated.
+8. A detailed interview report and downloadable PDF are generated.
+
+---
+
+# 🛠 Tech Stack
+
+### Programming Language
+
+- Python
+
+### Frontend
+
+- Streamlit
+
+### Computer Vision
+
+- OpenCV
+- MediaPipe
+
+### Speech Recognition
+
+- Faster Whisper
+
+### Natural Language Processing
+
+- Sentence Transformers
+- Transformers
+- Scikit-learn
+
+### Deep Learning
+
+- PyTorch
+
+### Report Generation
+
+- ReportLab
+
+---
+
+# 📂 Project Structure
 
 ```text
 AI_Interview_Coach/
 │
 ├── assets/
-│   └── questions.txt
+│   ├── answer_key.json
+│   ├── hr_questions.txt
+│   └── technical_questions.txt
 │
 ├── modules/
-│   ├── confidence.py
-│   ├── eye_contact.py
-│   ├── head_pose.py
-│   ├── posture.py
+│   ├── analysis.py
+│   ├── answer_evaluator.py
+│   ├── camera.py
+│   ├── hr_evaluator.py
+│   ├── interview_manager.py
+│   ├── interview_session.py
+│   ├── pdf_report.py
 │   ├── questions.py
 │   ├── report.py
 │   └── speech_analysis.py
@@ -88,37 +147,50 @@ AI_Interview_Coach/
 ├── recordings/
 ├── reports/
 │
+├── streamlit_app.py
 ├── main.py
 ├── requirements.txt
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## Installation
+# ⚙ Installation
 
-Clone the repository:
+Clone the repository
 
 ```bash
-git clone <repository-url>
-cd AI_Interview_Coach
+git clone https://github.com/<YOUR_USERNAME>/AI-Interview-Coach.git
 ```
 
-Create a virtual environment:
+Move into the project directory
+
+```bash
+cd AI-Interview-Coach
+```
+
+Create a virtual environment
 
 ```bash
 python -m venv env
 ```
 
-Activate the environment:
+### Activate Virtual Environment
 
-### Windows
+**Windows**
 
 ```bash
 env\Scripts\activate
 ```
 
-Install dependencies:
+**Linux / macOS**
+
+```bash
+source env/bin/activate
+```
+
+Install the required dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -126,62 +198,71 @@ pip install -r requirements.txt
 
 ---
 
-## Run the Project
+# ▶ Running the Application
+
+Launch the Streamlit application
+
+```bash
+streamlit run streamlit_app.py
+```
+
+The legacy OpenCV-based version is also available:
 
 ```bash
 python main.py
 ```
 
-Press:
+---
 
-```text
-Q
-```
+# 📊 Current Capabilities
 
-to end the interview session and generate the report.
+- ✅ HR Interview Simulation
+- ✅ Technical Interview Simulation
+- ✅ Mixed Interview Mode
+- ✅ Real-Time Eye Contact Detection
+- ✅ Head Stability Analysis
+- ✅ Posture Detection
+- ✅ Confidence Score Calculation
+- ✅ Faster Whisper Speech Recognition
+- ✅ HR Answer Evaluation
+- ✅ Technical Answer Evaluation
+- ✅ Question-wise Feedback
+- ✅ Automated PDF Report Generation
+- ✅ Interactive Streamlit Interface
 
 ---
 
-## Sample Report
+# 📄 Sample Output
 
-```text
-===================================
+The system automatically generates a professional interview report containing:
 
-INTERVIEW REPORT
-
-===================================
-
-Interview Duration : 52 seconds
-
-Eye Contact Score : 81%
-Head Stability Score : 1%
-Posture Score : 79%
-Confidence Score : 53.65%
-
-Speech Analysis
-
-Speaking Speed : 85.38 WPM
-Filler Words : 1
-Communication Score : 84.0%
-
-Interview Questions Asked:
-
-- Tell me about yourself.
-- Explain one of your projects.
-
-Overall Rating : Average
-
-===================================
-```
+- Interview Summary
+- Question-wise Scores
+- Speech Analysis
+- Eye Contact Score
+- Head Stability Score
+- Posture Score
+- Confidence Score
+- Personalized Feedback
+- Downloadable PDF Report
 
 ---
 
-## Future Improvements
+# 🚀 Future Improvements
 
-* Simultaneous Audio and Video Recording
-* Streamlit Web Interface
-* PDF Report Generation
-* Interview Transcript Export
-* Personalized Feedback Suggestions
-* Advanced Communication Analytics
-=======
+- Resume-based personalized interview questions
+- LLM-powered answer evaluation
+- Emotion detection using facial expressions
+- Voice tone and sentiment analysis
+- Interview performance analytics dashboard
+- Interview history tracking
+- Cloud deployment
+- Multi-language interview support
+
+---
+
+# 👨‍💻 Author
+
+**Ashik Kumar**
+
+AI/ML Engineer
