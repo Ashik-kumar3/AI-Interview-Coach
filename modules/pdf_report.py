@@ -22,8 +22,7 @@ def generate_pdf_report(
         posture_score,
         communication_score,
         confidence_score,
-        asked_questions,
-        feedback,
+        results
 ):
 
     os.makedirs("reports", exist_ok=True)
@@ -119,45 +118,103 @@ def generate_pdf_report(
     story.append(
 
         Paragraph(
-            "<b>Interview Questions</b>",
-            styles["Heading2"]
-        )
-    )
-
-    for q in asked_questions:
-
-        story.append(
-
-            Paragraph(
-                f"• {q}",
-                styles["BodyText"]
-            )
-
-        )
-
-    story.append(Spacer(1,0.25*inch))
-
-    story.append(
-
-        Paragraph(
-            "<b>Personalized Feedback</b>",
+            "<b>Question-wise Performance</b>",
             styles["Heading2"]
         )
 
     )
 
-    for line in feedback:
+    story.append(Spacer(1,0.15*inch))
+
+    for index, result in enumerate(results, start=1):
 
         story.append(
 
             Paragraph(
-                f"• {line}",
+                f"<b>Question {index}</b>",
+                styles["Heading3"]
+            )
+
+        )
+
+        story.append(
+
+            Paragraph(
+                f"<b>Question:</b> {result['question']}",
                 styles["BodyText"]
             )
 
         )
 
-    story.append(Spacer(1,0.25*inch))
+        story.append(
+
+            Paragraph(
+                "<b>Answer:</b>",
+                styles["BodyText"]
+            )
+
+        )
+
+        story.append(
+
+            Paragraph(
+                result["answer"],
+                styles["BodyText"]
+            )
+
+        )
+        
+        score = (
+            result["answer_score"]
+            if result["answer_score"] is not None
+            else "Not Evaluated"
+        )
+
+        story.append(
+
+            Paragraph(
+                f"<b>Score:</b> {score}",
+                styles["BodyText"]
+            )
+
+        )
+
+        if result["keywords_found"]:
+
+            story.append(
+
+                Paragraph(
+                    "<b>Keywords Found:</b> "
+                    + ", ".join(result["keywords_found"]),
+                    styles["BodyText"]
+                )
+
+            )
+
+        if result["missing_keywords"]:
+
+            story.append(
+
+                Paragraph(
+                    "<b>Missing Keywords:</b> "
+                    + ", ".join(result["missing_keywords"]),
+                    styles["BodyText"]
+                )
+
+            )
+
+        if result["feedback"]:
+
+            story.append(
+
+                Paragraph(
+                    f"<b>Feedback:</b> {result['feedback']}",
+                    styles["BodyText"]
+                )
+
+            )
+
+        story.append(Spacer(1,0.20*inch))
 
     if confidence_score >= 85:
 
@@ -187,3 +244,5 @@ def generate_pdf_report(
     doc.build(story)
 
     print(f"PDF Report saved : {filename}")
+
+    return filename

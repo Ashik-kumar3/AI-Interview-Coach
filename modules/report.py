@@ -80,3 +80,5 @@ Overall Rating : {rating}
         file.write(report)
 
     print(f"Report saved: {filename}")
+
+    return report, filename

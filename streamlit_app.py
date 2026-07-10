@@ -12,6 +12,8 @@ from modules.speech_analysis import (
 from modules.answer_evaluator import evaluate_answer
 from modules.hr_evaluator import evaluate_hr_answer
 from modules.interview_session import InterviewSession
+from modules.report import generate_report
+from modules.pdf_report import generate_pdf_report
 
 st.set_page_config(
     page_title="AI Interview Coach",
@@ -294,11 +296,10 @@ if st.session_state.interview_started:
 
                         st.session_state.answer_score = score
                         st.session_state.feedback = feedback
-
                         st.session_state.keywords_found = []
                         st.session_state.missing_keywords = []
 
-                    else:
+                    elif interview_mode == "Technical Interview":
 
                         score, found, missing, feedback = evaluate_answer(
                             current_question,
@@ -309,6 +310,32 @@ if st.session_state.interview_started:
                         st.session_state.feedback = feedback
                         st.session_state.keywords_found = found
                         st.session_state.missing_keywords = missing
+
+                    else:
+
+                        if current_question in hr_questions:
+
+                            score, feedback = evaluate_hr_answer(
+                                current_question,
+                                transcript
+                            )
+
+                            st.session_state.answer_score = score
+                            st.session_state.feedback = feedback
+                            st.session_state.keywords_found = []
+                            st.session_state.missing_keywords = []
+
+                        else:
+
+                            score, found, missing, feedback = evaluate_answer(
+                                current_question,
+                                transcript
+                            )
+
+                            st.session_state.answer_score = score
+                            st.session_state.feedback = feedback
+                            st.session_state.keywords_found = found
+                            st.session_state.missing_keywords = missing
 
                     st.success("Recording Completed")
 
@@ -434,6 +461,45 @@ if st.session_state.interview_started:
                 st.session_state.question_index
             ]
 
+            if st.session_state.transcript:
+
+                st.session_state.interview_session.add_result(
+
+                    question=current_question,
+
+                    answer=st.session_state.transcript,
+
+                    answer_score=st.session_state.answer_score,
+
+                    keywords_found=st.session_state.keywords_found,
+
+                    missing_keywords=st.session_state.missing_keywords,
+
+                    feedback=st.session_state.feedback
+
+                )
+
+            st.session_state.transcript = ""
+            st.session_state.answer_score = None
+            st.session_state.feedback = ""
+            st.session_state.keywords_found = []
+            st.session_state.missing_keywords = []
+
+            st.session_state.question_index += 1
+
+            st.rerun()
+
+
+    if finish:
+
+        # Save current question before finishing
+
+        current_question = questions[
+            st.session_state.question_index
+        ]
+
+        if st.session_state.transcript:
+
             st.session_state.interview_session.add_result(
 
                 question=current_question,
@@ -450,37 +516,125 @@ if st.session_state.interview_started:
 
             )
 
-            st.session_state.transcript = ""
-            st.session_state.answer_score = None
-            st.session_state.feedback = ""
-            st.session_state.keywords_found = []
-            st.session_state.missing_keywords = []
-
-            st.session_state.question_index += 1
-
-            st.rerun()
-
-
-    if finish:
+            st.write("Results after save:")
+            st.write(st.session_state.interview_session.results)
         
-        st.write(
-            st.session_state.interview_session.results
+        asked_questions = []
+
+        feedback = []
+
+        for result in st.session_state.interview_session.results:
+
+            asked_questions.append(
+                result["question"]
+            )
+
+            feedback.append(
+                result["feedback"]
+            )
+
+        elapsed = int(
+            time.time() -
+            st.session_state.start_time
+        )
+
+        report, report_file = generate_report(
+
+            eye_score=analysis.eye_contact,
+
+            head_score=analysis.head_stability,
+
+            posture_score=analysis.posture,
+
+            confidence_score=analysis.confidence,
+
+            interview_type=interview_mode,
+
+            interview_duration=elapsed,
+
+            asked_questions=asked_questions,
+
+            wpm=0,
+
+            fillers=0,
+
+            communication_score=70,
+
+            feedback=feedback
+
+        )
+
+        pdf_file = generate_pdf_report(
+
+            interview_type=interview_mode,
+
+            interview_duration=elapsed,
+
+            eye_score=analysis.eye_contact,
+
+            head_score=analysis.head_stability,
+
+            posture_score=analysis.posture,
+
+            communication_score=70,
+
+            confidence_score=analysis.confidence,
+            
+            results=st.session_state.interview_session.results
+
         )
         
         st.success(
             "Interview Finished!"
         )
 
+        st.text(report)
+
         st.write(
             f"Duration : {minutes:02d}:{seconds:02d}"
         )
 
-        st.session_state.interview_started = False
+        with open(pdf_file, "rb") as file:
+
+            st.download_button(
+
+                "📄 Download PDF Report",
+
+                file,
+
+                file_name="Interview_Report.pdf",
+
+                mime="application/pdf"
+
+            )
+
+        if st.button(
+            "🔄 Start New Interview",
+            use_container_width=True
+        ):
+
+            st.session_state.interview_started = False
+
+            st.session_state.question_index = 0
+
+            st.session_state.transcript = ""
+
+            st.session_state.answer_score = None
+
+            st.session_state.feedback = ""
+
+            st.session_state.keywords_found = []
+
+            st.session_state.missing_keywords = []
+
+            st.session_state.audio_stream = None
+
+            st.session_state.interview_session = InterviewSession()
+
+            st.rerun()
 
         st.markdown("---")
 
         st.caption(
             "Built with ❤️ using Python • Streamlit • OpenCV • MediaPipe • Faster Whisper"
         )
-
-        st.rerun()
