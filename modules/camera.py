@@ -22,7 +22,7 @@ pose = mp_pose.Pose(
 
 class VideoProcessor(VideoTransformerBase):
 
-    def transformer(self, frame):
+    def transform(self, frame):
 
         img = frame.to_ndarray(format="bgr24")
 

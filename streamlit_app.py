@@ -7,7 +7,9 @@ from modules.analysis import analysis
 from modules.speech_analysis import (
     start_recording,
     stop_recording,
-    speech_to_text
+    speech_to_text,
+    calculate_wpm,
+    count_fillers
 )
 from modules.answer_evaluator import evaluate_answer
 from modules.hr_evaluator import evaluate_hr_answer
@@ -138,6 +140,12 @@ if "question_index" not in st.session_state:
 if "audio_stream" not in st.session_state:
     st.session_state.audio_stream = None
 
+if "recording_started" not in st.session_state:
+    st.session_state.recording_started = False
+
+if "recording_start_time" not in st.session_state:
+    st.session_state.recording_start_time = None
+
 if "transcript" not in st.session_state:
     st.session_state.transcript = ""
 if "answer_score" not in st.session_state:
@@ -151,6 +159,15 @@ if "keywords_found" not in st.session_state:
 
 if "missing_keywords" not in st.session_state:
     st.session_state.missing_keywords = []
+
+if "wpm" not in st.session_state:
+    st.session_state.wpm = 0
+
+if "fillers" not in st.session_state:
+    st.session_state.fillers = 0
+
+if "communication_score" not in st.session_state:
+    st.session_state.communication_score = 0
 
 if "interview_session" not in st.session_state:
     st.session_state.interview_session = InterviewSession()
@@ -174,19 +191,6 @@ st.info(
 
 
 if st.session_state.interview_started:
-
-    st.subheader("🎯 Current Question")
-
-    st.success(
-        questions[
-            st.session_state.question_index
-        ]
-    )
-
-    st.caption(
-        "Answer naturally while looking at the camera."
-    )
-
     
     progress = (
         st.session_state.question_index + 1
@@ -260,6 +264,10 @@ if st.session_state.interview_started:
 
                     st.session_state.audio_stream = start_recording()
 
+                    st.session_state.recording_start_time = time.time()
+
+                    st.session_state.recording_started = True
+
                     st.success("Recording Started")
 
         with r2:
@@ -280,8 +288,53 @@ if st.session_state.interview_started:
                     transcript = speech_to_text(
                         audio_file
                     )
-
+                      
                     st.session_state.transcript = transcript
+
+                    if st.session_state.recording_start_time is not None:
+
+                        recording_duration = max(
+                            time.time() - st.session_state.recording_start_time,
+                            1
+                        )
+
+                    else:
+
+                        recording_duration = 1
+
+                    st.session_state.wpm = calculate_wpm(
+                        transcript,
+                        recording_duration
+                    )
+
+                    st.session_state.fillers = count_fillers(
+                        transcript
+                    )
+
+                    score = 100
+
+                    # Ideal speaking speed
+                    if st.session_state.wpm < 90:
+                        score -= 25
+
+                    elif st.session_state.wpm < 110:
+                        score -= 10
+
+                    elif st.session_state.wpm > 180:
+                        score -= 25
+
+                    elif st.session_state.wpm > 160:
+                        score -= 10
+
+                    # Penalty for filler words
+                    score -= st.session_state.fillers * 3
+
+                    st.session_state.communication_score = max(
+                        0,
+                        min(100, score)
+                        )
+
+                    st.session_state.recording_start_time = None
 
                     current_question = questions[
                         st.session_state.question_index
@@ -339,23 +392,31 @@ if st.session_state.interview_started:
 
                     st.success("Recording Completed")
 
+                    st.session_state.recording_started = False
+
                     st.rerun()
+        
+        if st.session_state.recording_started:
+
+            st.subheader("🎯 Current Question")
+
+            st.success(
+                questions[
+                    st.session_state.question_index
+                ]
+            )
+
+            st.caption(
+                "Answer naturally while looking at the camera."
+            )
+
+        else:
+
+            st.info(
+                "Click 'Start Recording' to begin the interview."
+            )
 
         st.markdown("### Interview Controls")
-
-        if st.session_state.transcript:
-
-            st.subheader("📝 Transcript")
-
-            st.text_area(
-
-                "Answer",
-
-                st.session_state.transcript,
-
-                height=150
-
-            )
 
         if st.session_state.answer_score is not None:
 
@@ -444,14 +505,20 @@ if st.session_state.interview_started:
         if st.session_state.question_index > 0:
             
             st.session_state.transcript = ""
+
+            st.session_state.recording_started = False
+
             st.session_state.answer_score = None
+
             st.session_state.feedback = ""
+
             st.session_state.keywords_found = []
+
             st.session_state.missing_keywords = []
+
             st.session_state.question_index -= 1
 
             st.rerun()
-
 
     if next_btn:
 
@@ -480,6 +547,7 @@ if st.session_state.interview_started:
                 )
 
             st.session_state.transcript = ""
+            st.session_state.recording_started = False
             st.session_state.answer_score = None
             st.session_state.feedback = ""
             st.session_state.keywords_found = []
@@ -514,10 +582,7 @@ if st.session_state.interview_started:
 
                 feedback=st.session_state.feedback
 
-            )
-
-            st.write("Results after save:")
-            st.write(st.session_state.interview_session.results)
+            ) 
         
         asked_questions = []
 
@@ -554,11 +619,11 @@ if st.session_state.interview_started:
 
             asked_questions=asked_questions,
 
-            wpm=0,
+            wpm=st.session_state.wpm,
 
-            fillers=0,
+            fillers=st.session_state.fillers,
 
-            communication_score=70,
+            communication_score=st.session_state.communication_score,
 
             feedback=feedback
 
@@ -576,7 +641,7 @@ if st.session_state.interview_started:
 
             posture_score=analysis.posture,
 
-            communication_score=70,
+            communication_score=st.session_state.communication_score,
 
             confidence_score=analysis.confidence,
             
@@ -607,6 +672,8 @@ if st.session_state.interview_started:
                 mime="application/pdf"
 
             )
+        
+        st.session_state.recording_started = False
 
         if st.button(
             "🔄 Start New Interview",
@@ -630,6 +697,16 @@ if st.session_state.interview_started:
             st.session_state.audio_stream = None
 
             st.session_state.interview_session = InterviewSession()
+            
+            st.session_state.recording_started = False
+
+            st.session_state.wpm = 0
+
+            st.session_state.fillers = 0
+
+            st.session_state.communication_score = 0
+
+            st.session_state.recording_start_time = None
 
             st.rerun()
 

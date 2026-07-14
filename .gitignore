@@ -1,8 +1,27 @@
+# Virtual Environment
 env/
+venv/
+
+# Python Cache
 __pycache__/
 *.pyc
 
+# VS Code
+.vscode/
+
+# Generated Files
 recordings/
 reports/
 
-.vscode/
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Streamlit Cache
+.streamlit/
+
+# Model Cache
+models/
+
+# Temporary Files
+*.log
