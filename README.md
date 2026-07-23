@@ -132,7 +132,7 @@ AI_Interview_Coach/
 │   ├── hr_questions.txt
 │   └── technical_questions.txt
 │
-├── modules/
+├── modules/ llm/ base.py, factory.py, gemini.py,ollama.py
 │   ├── analysis.py
 │   ├── answer_evaluator.py
 │   ├── camera.py
@@ -211,6 +211,8 @@ The legacy OpenCV-based version is also available:
 ```bash
 python main.py
 ```
+ollama pull llama3.1:8b
+ollama serve
 
 ---
 
@@ -230,6 +232,21 @@ python main.py
 - ✅ Automated PDF Report Generation
 - ✅ Interactive Streamlit Interface
 
+## 🤖 AI Recruiter Evaluation
+
+Supports multiple LLM providers:
+
+- Google Gemini API
+- Ollama (Offline Local LLM)
+
+Provides:
+- Recruiter Score
+- Hiring Recommendation
+- Communication Rating
+- Strengths
+- Missing Concepts
+- Improvement Suggestions
+
 ---
 
 # 📄 Sample Output
@@ -248,10 +265,20 @@ The system automatically generates a professional interview report containing:
 
 ---
 
+## Environment Variables
+
+Create a `.env` file:
+
+GEMINI_API_KEY=xxxxxxxxxxxx
+LLM_PROVIDER=gemini
+
+or
+
+LLM_PROVIDER=ollama
+
 # 🚀 Future Improvements
 
 - Resume-based personalized interview questions
-- LLM-powered answer evaluation
 - Emotion detection using facial expressions
 - Voice tone and sentiment analysis
 - Interview performance analytics dashboard

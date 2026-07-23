@@ -13,6 +13,7 @@ from modules.speech_analysis import (
 )
 from modules.answer_evaluator import evaluate_answer
 from modules.hr_evaluator import evaluate_hr_answer
+from modules.llm.factory import get_llm
 from modules.interview_session import InterviewSession
 from modules.report import generate_report
 from modules.pdf_report import generate_pdf_report
@@ -22,6 +23,8 @@ st.set_page_config(
     page_icon="🎤",
     layout="wide"
 )
+
+llm = get_llm()
 
 # ---------------- Header ----------------
 
@@ -148,11 +151,15 @@ if "recording_start_time" not in st.session_state:
 
 if "transcript" not in st.session_state:
     st.session_state.transcript = ""
+
 if "answer_score" not in st.session_state:
     st.session_state.answer_score = None
 
 if "feedback" not in st.session_state:
     st.session_state.feedback = ""
+
+if "llm_result" not in st.session_state:
+    st.session_state.llm_result = None  
 
 if "keywords_found" not in st.session_state:
     st.session_state.keywords_found = []
@@ -352,9 +359,15 @@ if st.session_state.interview_started:
                         st.session_state.keywords_found = []
                         st.session_state.missing_keywords = []
 
+                        st.session_state.llm_result = llm.evaluate(
+                            question=current_question,
+                            answer=transcript,
+                            expected_keywords=[]
+                        )
+
                     elif interview_mode == "Technical Interview":
 
-                        score, found, missing, feedback = evaluate_answer(
+                        score, found, missing, tech_terms, feedback = evaluate_answer(
                             current_question,
                             transcript
                         )
@@ -363,6 +376,14 @@ if st.session_state.interview_started:
                         st.session_state.feedback = feedback
                         st.session_state.keywords_found = found
                         st.session_state.missing_keywords = missing
+
+
+                        # AI Recruiter Evaluation
+                        st.session_state.llm_result = llm.evaluate(
+                            question=current_question,
+                            answer=transcript,
+                            expected_keywords=missing + found
+                        )
 
                     else:
 
@@ -378,9 +399,15 @@ if st.session_state.interview_started:
                             st.session_state.keywords_found = []
                             st.session_state.missing_keywords = []
 
+                            st.session_state.llm_result = llm.evaluate(
+                                question=current_question,
+                                answer=transcript,
+                                expected_keywords=[]
+                            )
+
                         else:
 
-                            score, found, missing, feedback = evaluate_answer(
+                            score, found, missing,tech_terms, feedback = evaluate_answer(
                                 current_question,
                                 transcript
                             )
@@ -389,6 +416,13 @@ if st.session_state.interview_started:
                             st.session_state.feedback = feedback
                             st.session_state.keywords_found = found
                             st.session_state.missing_keywords = missing
+                        
+                            st.session_state.llm_result = llm.evaluate(
+                                question=current_question,
+                                answer=transcript,
+                                expected_keywords=missing + found
+                            )
+
 
                     st.success("Recording Completed")
 
@@ -448,6 +482,43 @@ if st.session_state.interview_started:
             st.info(
                 st.session_state.feedback
             )
+
+            # ---------------- AI Recruiter Evaluation ----------------
+
+            if st.session_state.llm_result:
+
+                llm = st.session_state.llm_result
+
+                st.markdown("### 🤖 AI Recruiter Evaluation")
+
+                st.metric(
+                    "Recruiter Score",
+                    f"{llm['score']}/100"
+                )
+
+                st.success(
+                    f"**Communication:** {llm['communication_rating']}"
+                )
+
+                st.info(
+                    f"**Hiring Recommendation:** {llm['hiring_recommendation']}"
+                )
+
+                st.write("**Strengths**")
+                for item in llm["strengths"]:
+                    st.write(f"✅ {item}")
+
+                st.write("**Missing Concepts**")
+                for item in llm["missing_concepts"]:
+                    st.write(f"❌ {item}")
+
+                st.write("**Improvements**")
+                for item in llm["improvements"]:
+                    st.write(f"💡 {item}")
+
+                st.markdown("**Recruiter Feedback**")
+
+                st.write(llm["recruiter_feedback"])
 
         c1, c2, c3 = st.columns(3)
 
@@ -512,6 +583,8 @@ if st.session_state.interview_started:
 
             st.session_state.feedback = ""
 
+            st.session_state.llm_result = None
+
             st.session_state.keywords_found = []
 
             st.session_state.missing_keywords = []
@@ -542,13 +615,16 @@ if st.session_state.interview_started:
 
                     missing_keywords=st.session_state.missing_keywords,
 
-                    feedback=st.session_state.feedback
+                    feedback=st.session_state.feedback,
+
+                    llm_result=st.session_state.llm_result
 
                 )
 
             st.session_state.transcript = ""
             st.session_state.recording_started = False
             st.session_state.answer_score = None
+            st.session_state.llm_result = None
             st.session_state.feedback = ""
             st.session_state.keywords_found = []
             st.session_state.missing_keywords = []
@@ -580,7 +656,9 @@ if st.session_state.interview_started:
 
                 missing_keywords=st.session_state.missing_keywords,
 
-                feedback=st.session_state.feedback
+                feedback=st.session_state.feedback,
+
+                llm_result=st.session_state.llm_result
 
             ) 
         
@@ -689,6 +767,8 @@ if st.session_state.interview_started:
             st.session_state.answer_score = None
 
             st.session_state.feedback = ""
+
+            st.session_state.llm_result = None
 
             st.session_state.keywords_found = []
 

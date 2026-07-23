@@ -25,3 +25,5 @@ models/
 
 # Temporary Files
 *.log
+
+.env

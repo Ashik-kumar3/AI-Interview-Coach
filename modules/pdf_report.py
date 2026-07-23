@@ -214,6 +214,101 @@ def generate_pdf_report(
 
             )
 
+        # ==============================
+        # Gemini AI Recruiter Evaluation
+        # ==============================
+
+        llm = result.get("llm_result")
+
+        if llm:
+
+            story.append(Spacer(1, 0.08 * inch))
+
+            story.append(
+
+                Paragraph(
+                    "<b><font color='blue'>AI Recruiter Evaluation</font></b>",
+                    styles["Heading3"]
+                )
+
+            )
+
+            if llm.get("score") is not None:
+
+                story.append(
+                    Paragraph(
+                        f"<b>Recruiter Score:</b> {llm['score']}/100",
+                        styles["BodyText"]
+                    )
+                )
+
+            if llm.get("communication_rating"):
+
+                story.append(
+                    Paragraph(
+                        f"<b>Communication Rating:</b> {llm['communication_rating']}",
+                        styles["BodyText"]
+                    )
+                )
+
+            if llm.get("strengths"):
+
+                story.append(
+                    Paragraph("<b>Strengths:</b>", styles["BodyText"])
+                )
+
+                for item in llm["strengths"]:
+                    story.append(
+                        Paragraph(f"• {item}", styles["BodyText"])
+                    )
+
+                story.append(Spacer(1, 0.05 * inch))
+
+            if llm.get("missing_concepts"):
+
+                story.append(
+                    Paragraph("<b>Missing Concepts:</b>", styles["BodyText"])
+                )
+
+                for item in llm["missing_concepts"]:
+                    story.append(
+                        Paragraph(f"• {item}", styles["BodyText"])
+                    )
+
+                story.append(Spacer(1, 0.05 * inch))
+
+            if llm.get("improvements"):
+
+                story.append(
+                    Paragraph("<b>Improvements:</b>", styles["BodyText"])
+                )
+
+                for item in llm["improvements"]:
+                    story.append(
+                        Paragraph(f"• {item}", styles["BodyText"])
+                    )
+
+                story.append(Spacer(1, 0.05 * inch))
+
+            if llm.get("hiring_recommendation"):
+
+                story.append(
+                    Paragraph(
+                        f"<b>Hiring Recommendation:</b> {llm['hiring_recommendation']}",
+                        styles["BodyText"]
+                    )
+                )
+
+            if llm.get("recruiter_feedback"):
+
+                story.append(
+                    Paragraph(
+                        f"<b>Recruiter Feedback:</b> {llm['recruiter_feedback']}",
+                        styles["BodyText"]
+                    )
+                )
+
+
         story.append(Spacer(1,0.20*inch))
 
     if confidence_score >= 85:

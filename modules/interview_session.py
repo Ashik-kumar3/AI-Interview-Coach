@@ -11,7 +11,8 @@ class InterviewSession:
         answer_score,
         keywords_found,
         missing_keywords,
-        feedback
+        feedback,
+        llm_result=None
     ):
 
         self.results.append({
@@ -26,7 +27,9 @@ class InterviewSession:
 
             "missing_keywords": missing_keywords,
 
-            "feedback": feedback
+            "feedback": feedback,
+
+            "llm_result": llm_result
 
         })
 

@@ -1,5 +1,4 @@
 import json
-import re
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -170,7 +169,23 @@ def evaluate_answer(question, candidate_answer):
         [embeddings[1]]
     )[0][0]
 
-    score = round(score * 100, 2)
+    semantic_score = round(
+        score * 75,
+        2
+    )
+
+    tech_score, tech_terms = technical_term_score(
+        candidate_answer
+    )
+
+    length = length_score(
+        candidate_answer
+    )
+
+    final_score = min(
+        round(semantic_score + tech_score + length),
+        100
+    )
 
     found = []
 
@@ -188,30 +203,44 @@ def evaluate_answer(question, candidate_answer):
 
             missing.append(word)
 
-    # Generate feedback based on score
+    # Generate dynamic feedback
 
-    if score >= 85:
+    feedback = []
 
-        feedback = (
-            "Excellent answer. You covered most of the important concepts."
+    # Positive feedback
+    if found:
+        feedback.append(
+            f"Good job mentioning: {', '.join(found[:3])}."
+        )
+ 
+    #Missing keywords
+    if len(missing) > 0:
+        feedback.append(
+            f"Include concepts such as: {', '.join(missing[:3])}."
         )
 
-    elif score >= 70:
-
-        feedback = (
-            "Good answer. Try including a few more technical details."
+    if tech_score < 6:
+        feedback.append(
+            "Mention more relevant technical terms."
         )
 
-    elif score >= 50:
-
-        feedback = (
-            "Average answer. Some important concepts are missing."
+    if length < 6:
+        feedback.append(
+            "Expand your answer with more details."
         )
 
-    else:
-
-        feedback = (
-            "Needs improvement. Review the topic and include more key concepts."
+    if not feedback:
+        feedback.append(
+            "Excellent answer. Well structured and relevant."
         )
 
-    return score, found, missing, feedback
+    feedback = " ".join(feedback)
+
+    
+    return (
+        final_score,
+        found,
+        missing,
+        tech_terms,
+        feedback
+    )
